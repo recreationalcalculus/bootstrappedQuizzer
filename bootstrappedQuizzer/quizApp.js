@@ -3,30 +3,41 @@
 var quizApp = {};
 
 
-//=====================================================
-//      Define Question Object -- Instance variables
-//=====================================================
+//=============================================================================
+//      Define Question Object -- Instance variables (defined by constructor)
+//=============================================================================
 quizApp.Question = function () {
 
+    // this text will by called by the Quiz object to rewrite the title in the nav bar
     this.quizTitle = 'The World\'s Easiest Quiz';
 
+    // this property keeps track of whether the problem was answered correctly, incorrectly, or not at all
     this.status = { isCorrect: false, isIncorrect: false, isUnanswered: true };
 
-    //The Question object writes and maintains its own settings modal
+    // The Question object writes and maintains its own settings object
+    // in order to manipulate the settings modal. To create a quiz with custom 
+    // questions, this object would need to be overwritten and the write and update 
+    // functions would need to be implemented
     this.settings = {
 
+        // "Lorem Ipsum" style filler options
         option1: {
+            // check to see if a value is present in an already-written modal. If not, set default values
             value1: (document.getElementById('op1val1') ? document.getElementById('op1val1').checked : true),
             value2: (document.getElementById('op1val2') ? document.getElementById('op1val2').checked : false),
         },
+        // // "Lorem Ipsum" style filler options
         option2: {
+            // check to see if a value is present in an already-written modal. If not, set default values
             value1: (document.getElementById('op2val1') ? document.getElementById('op2val1').checked : true),
             value2: (document.getElementById('op2val2') ? document.getElementById('op2val2').checked : true),
             value3: (document.getElementById('op2val3') ? document.getElementById('op2val3').checked : false)
         },
 
+        //rewrites the settings modal with current values for option1 and option2
         write: function () {
-            //write the html that will go into the settings modal
+            // write the html that will go into the settings modal
+            // note that option values are read from the option1 and option2 objects
             var str = '';
 
             str += '<div class="panel panel-primary">';
@@ -52,7 +63,10 @@ quizApp.Question = function () {
             document.getElementById('settingsForm').innerHTML = str;
         },
 
+        // read values from the settings modal form elements and store them 
+        // in the corresponding option objects
         update: function () {
+
             this.option1.value1 = document.getElementById('op1val1').checked;
             this.option1.value2 = document.getElementById('op1val2').checked;
 
@@ -65,13 +79,17 @@ quizApp.Question = function () {
     };
 }
 
-//=====================================================
-//      Define Question Object -- methods
-//=====================================================
+//======================================================================
+//      Define Question Object -- assign methods to Question prototype
+//======================================================================
 quizApp.Question.prototype = {
-
+    // assign the function that is called when new keyword is used
     constructor: quizApp.Question,
-
+    // generate the function and write the HTML that will go
+    // into the carousel item under the heading. Note that this
+    // method must also create the form elements necessary to 
+    // answer the question. For a custom question, this method
+    // would need to be overwritten.
     writeQuestion: function (questionIndex) {
         var countOp2Values = 0;
         if (this.settings.option2.value1) { countOp2Values++; }
@@ -136,6 +154,9 @@ quizApp.Question.prototype = {
         return str;
     },
 
+    // must return true or false based on whether the answer is correct
+    // or not. For a custom question, this method would need to be 
+    // overwritten.
     isCorrect: function (answer) {
         //return true or false depending on whether answer is correct
         return answer;
@@ -145,41 +166,59 @@ quizApp.Question.prototype = {
 
 
 
-//=====================================================
-//      Define Quiz Object -- Instance variables
-//=====================================================
+//=================================================================================
+//      Define Quiz Object -- Instance variables & setup (defined by constructor)
+//=================================================================================
 quizApp.Quiz = function (numberOfQuestions) {
 
+    // the length of the quiz
     this.numberOfQuestions = numberOfQuestions;
 
+    // the array to store the question objects
     this.questionList = [];
 
     // a Quiz object is basically an array of question 
-    // objects with a few helper methods tacked on
+    // objects with a few helper methods tacked on.
+    // here the array is populated initially when the 
+    // constructor is called
     for (var i = 0; i < numberOfQuestions; i++) {
         this.questionList.push(new quizApp.Question());
     }
 };
 
-//=====================================================
-//      Define Quiz Object -- Methods
-//=====================================================
+//==============================================================
+//      Define Quiz Object -- assign methods to Quiz prototype
+//==============================================================
 quizApp.Quiz.prototype = {
 
     constructor: quizApp.Quiz,
 
+    // set up the Stats well at the bottom of the page
+    // all values are set to  0
     makeQuestionArray: function () {
         document.getElementById('attempted').innerHTML = 0;
         document.getElementById('correct').innerHTML = 0;
         document.getElementById('incorrect').innerHTML = 0;
         document.getElementById('percent').innerHTML = '0%';
-        this.questionList = [];
-        for (var i = 0; i < this.numberOfQuestions; i++) {
-            this.questionList.push(new quizApp.Question());
-        }
+
+        // if this function was called by upDate settings,
+        // a new question array with questions generated by
+        // the new settings will be created
+
+        //if (Function.caller === this.updateSettings) {
+            this.questionList = [];
+            for (var i = 0; i < this.numberOfQuestions; i++) {
+                this.questionList.push(new quizApp.Question());
+            }
+        //}
     },
 
+    // write the div structure and heading (e.g. glyph+"Question 1")
+    // for an item in the carousel
     writeQuestion: function (questionIndex) {
+
+        // first we determine if we need a check, x-mark, or no glyph
+        // at all for this question
         var headingGlyph = '';
 
         if (this.questionList[questionIndex].status.isCorrect) {
@@ -192,6 +231,7 @@ quizApp.Quiz.prototype = {
             headingGlyph = '';
         }
 
+        // then we write the html
         var str = '';
         str += '<div class="item' + (questionIndex === 0 ? ' active' : '') + '" id="carouselQuestion' + questionIndex + '">';
         str += '<h1>' + headingGlyph + 'Question ' + (questionIndex + 1) + '</h1>';
@@ -200,6 +240,7 @@ quizApp.Quiz.prototype = {
         return str;
     },
 
+    //make the carousel, populating it with the questions from the array
     makeCarousel: function () {
 
         var str = '';
@@ -207,12 +248,18 @@ quizApp.Quiz.prototype = {
         str += '<div class="container">';
 
         str += '<ol class="carousel-indicators">';
+
+        // This places the dots at the bottom of the carousel and
+        // sets their color based on the question status
         for (var i = 0; i < this.questionList.length; i++) {
             str += '<li class="' + ((i === 0) ? 'active ' : '') + '" data-target="#myCarousel" data-slide-to="' + i + '" id="carousel-indicator' + i + '"></li>';
         }
         str += '</ol>';
 
         str += '<div class="carousel-inner">';
+
+        // This cycles through the question array, inserting their 
+        // write writeQuestion method HTML into the carousel slide
         for (var i = 0; i < this.questionList.length; i++) {
             str += this.writeQuestion(i);
         }
@@ -230,6 +277,7 @@ quizApp.Quiz.prototype = {
 
     },
 
+    // check whether the answer supplied by questionList[questionIndex] is correct
     check: function (questionIndex, answer) {
         var question = this.questionList[questionIndex];
         if (question.status.isUnanswered) {
@@ -279,6 +327,8 @@ quizApp.Quiz.prototype = {
 
     },
 
+    // redraw the carousel and reset the stats
+    // when the settings are changed
     updateSettings: function () {
         (new quizApp.Question()).settings.update();
         (new quizApp.Question()).settings.write();
@@ -286,6 +336,8 @@ quizApp.Quiz.prototype = {
         this.makeCarousel();
     },
 
+    // swaps out the initial jumbotron with the question carousel
+    // and writes the settings modal
     initiate: function () {
         (new quizApp.Question()).settings.write();
         document.getElementById('quizTitle').innerHTML = (new quizApp.Question()).quizTitle;
