@@ -1,0 +1,23 @@
+﻿body {
+    padding-top: 50px;
+}
+
+.list-group, .badges {
+    font-size: x-large;
+}
+
+.statNum {
+    padding-left: 1em;
+}
+
+ol.carousel-indicators li {
+    background-color: #222;
+}
+
+.red {
+    color: #a94442;
+}
+
+.green {
+    color: #3c763d;
+}

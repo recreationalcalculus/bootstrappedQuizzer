@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Bootstrapped Quizzer</title>
+    <meta name="viewport" content="Width=device-width,initial-scale=1.0">
+
+    <link href="Content/bootstrap.css" rel="stylesheet" />
+    <link href="Content/bootstrap-theme.css" rel="stylesheet" />
+    <link href="site.css" rel="stylesheet" />
+</head>
+<body onload="(function(){q = new quizApp.Quiz(10);})()">
+    <!----------
+       Navbar
+    ----------->
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <a class="navbar-brand text-muted" href="#" id="quizTitle">Quiz</a>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#settingsModal" data-toggle="modal" data-target="#settingsModal"><span class="glyphicon glyphicon-cog"></span></a></li>
+            </ul>
+        </div>
+    </div>
+    <!--------------
+       End Navbar
+    --------------->
+    <!----------------
+        Modal Window
+    ----------------->
+    <div class="modal fade" id="settingsModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-cog"></span>Settings</h4>
+                </div>
+                <div class="modal-body">
+                    <form action="javascript:void()" id="settingsForm">
+                        <h1 style="text-align:center">Sorry, there are no settings available yet.</h1>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" title="Discard changes to settings and continue current quiz">Cancel</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" onclick="q.updateSettings()" title="Update settings and start new quiz.">Ok!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-------------------
+       End Modal Window
+    -------------------->
+    <!-----------
+       Carousel
+    ------------>
+    <div id="main">
+        <div class="jumbotron">
+            <div class="container">
+                <h1>Ready? Set?</h1>
+                <button class="btn btn-success" onclick="q.initiate()">Go!</button>
+            </div>
+        </div>
+    </div>
+    <!---------------
+       End Carousel
+    ---------------->
+    <!---------------
+        Stats Well
+    ---------------->
+    <div class="container">
+        <div class="well">
+            <div class="page-header">
+                <h1>Stats</h1>
+            </div>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <span class="badge alert-info" id="attempted">0</span>
+                    Attempted:
+                </li>
+                <li class="list-group-item">
+                    <span class="badge alert-success" id="correct">0</span>
+                    Correct:
+                </li>
+                <li class="list-group-item">
+                    <span class="badge alert-danger" id="incorrect">0</span>
+                    Incorrect:
+                </li>
+                <li class="list-group-item">
+                    <span class="badge alert-info" id="percent">0%</span>
+                    Percentage:
+                </li>
+            </ul>
+        </div>
+
+    </div>
+    <!------------------
+        End Stats Well
+    ------------------->
+    <!-----------------------------
+       Load Javascript Resources
+    ------------------------------>
+    <script src="Scripts/jquery-1.9.1.js"></script>
+    <script src="Scripts/bootstrap.js"></script>
+    <script src="quizApp.js"></script>
+</body>
+</html>
